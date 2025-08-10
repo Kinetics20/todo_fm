@@ -20,6 +20,30 @@ class Task(TypedDict):
     tags: list[str]
 
 
+def normalize_priority(
+        priority: Priority | str
+) -> Priority:
+    if isinstance(priority, Priority):
+        return priority
+    try:
+        return Priority(priority)
+    except ValueError:
+        raise ValueError(f'Priority must be one of: {[p.value for p in Priority]}')
+
+
+def validate_description(description: str) -> str:
+    if not isinstance(description, str) or len(description.strip()) < 3:
+        raise ValueError('Description must be a non-empty string equal or longer than 3 characters.')
+    return description.strip()
+
+
+def validate_due_date(due_date: date | None, *, today: date) -> date | None:
+    if due_date is not None and not isinstance(due_date, date):
+        raise ValueError('Due date must be a date object or None.')
+    if due_date is not None and due_date < today:
+        raise ValueError('Due date cannot be earlier than the created at date.')
+    return due_date
+
 
 def create_task(
         description: str,
@@ -27,22 +51,11 @@ def create_task(
         priority: Priority | str = Priority.MEDIUM,
         tags: list[str] | None = None
 ) -> Task:
-    if not isinstance(description, str) and len(description.strip()) <= 3:
-        raise ValueError('Description must be a non-empty string equal or longer than 3 characters.')
+    today = date.today()
 
-    if not isinstance(due_date, date) and due_date is not None:
-        raise ValueError('Due date must be a date object or None.')
-
-    created_at = date.today()
-
-    if due_date is not None and due_date < created_at:
-        raise ValueError('Due date cannot be earlier than the created at date.')
-
-    if isinstance(priority, str):
-        try:
-            priority = Priority(priority)
-        except ValueError:
-            raise ValueError(f'Priority must be one of: {[p.value for p in Priority]}')
+    description = validate_description(description)
+    priority = normalize_priority(priority)
+    due_date = validate_due_date(due_date, today=today)
 
     if tags is None:
         tags = []
@@ -50,14 +63,14 @@ def create_task(
     return {
         'id': str(uuid.uuid4()),
         'description': description,
-        'created_at': created_at,
+        'created_at': today,
         'due_date': due_date,
         'priority': priority,
         'done': False,
         'tags': tags
     }
 
+
 if __name__ == '__main__':
     task = create_task('123', date(2025, 8, 10), Priority.HIGH)
     print(task)
-
