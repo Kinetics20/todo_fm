@@ -1,4 +1,5 @@
 import uuid
+from collections.abc import Iterable
 from datetime import date
 from enum import Enum
 from typing import TypedDict
@@ -45,20 +46,34 @@ def validate_due_date(due_date: date | None, *, today: date) -> date | None:
     return due_date
 
 
+def unique_tags(tags: Iterable[str] | None) -> list[str]:
+    if tags is None:
+        return []
+
+    seen: set[str] = set()
+    out: list[str] = []
+
+    for tag in (t.strip().lower() for t in tags):
+        if tag and tag not in seen:
+            seen.add(tag)
+            out.append(tag)
+    return out
+
+
 def create_task(
         description: str,
         due_date: date | None = None,
         priority: Priority | str = Priority.MEDIUM,
-        tags: list[str] | None = None
+        tags: list[str] | None = None,
+        *,
+        today: date | None = None
 ) -> Task:
-    today = date.today()
+    today = date.today() if today is None else today
 
     description = validate_description(description)
-    priority = normalize_priority(priority)
     due_date = validate_due_date(due_date, today=today)
-
-    if tags is None:
-        tags = []
+    priority = normalize_priority(priority)
+    tags = unique_tags(tags)
 
     return {
         'id': str(uuid.uuid4()),
