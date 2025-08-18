@@ -19,6 +19,7 @@ class Task(TypedDict):
     priority: Priority
     done: bool
     tags: list[str]
+    completed_at: date | None
 
 
 def normalize_priority(priority: Priority | str) -> Priority:
@@ -81,6 +82,7 @@ def create_task(
         "priority": priority,
         "done": False,
         "tags": tags,
+        "completed_at": None,
     }
 
 
@@ -88,6 +90,34 @@ def is_overdue(task: Task, *, today: date | None = None) -> bool:
     today = date.today() if today is None else today
 
     return (task["due_date"] is not None) and (task["due_date"] < today) and not task["done"]
+
+
+def has_tag(task: Task, tag: str) -> bool:
+    return tag.strip().lower() in task["tags"]
+
+
+def mark_done(task: Task) -> None:
+    task["done"] = True
+    task["completed_at"] = date.today()
+
+
+def time_left(task: Task, today: date | None = None) -> str:
+    today = date.today() if today is None else today
+
+    if task["done"]:
+        return "Task already completed."
+
+    if task["due_date"] is None:
+        return "Infinite time left."
+
+    delta = (task["due_date"] - today).days
+
+    if delta < 0:
+        return f"Overdue by {abs(delta)} day{'s' if abs(delta) != 1 else ''}."
+    elif delta == 0:
+        return "Due today!"
+    else:
+        return f"{delta} day{'s' if delta != 1 else ''} left."
 
 
 if __name__ == "__main__":

@@ -1,9 +1,10 @@
 import uuid
-from datetime import date
+from datetime import date, timedelta
 
 import pytest
+from _pytest.monkeypatch import MonkeyPatch
 
-from src.task import Priority
+from src.task import Priority, Task
 
 
 @pytest.fixture
@@ -25,14 +26,14 @@ def valid_tags() -> list[str]:
 
 
 @pytest.fixture
-def predictable_uuid(monkeypatch):
+def predictable_uuid(monkeypatch: MonkeyPatch) -> str:
     """Check predictable uuid."""
 
     class Dummy:
         def __init__(self, value: str):
             self.value = value
 
-        def __str__(self):
+        def __str__(self) -> str:
             return self.value
 
     dummy = Dummy("00000000-0000-0000-0000-000000000000")
@@ -41,13 +42,14 @@ def predictable_uuid(monkeypatch):
 
 
 @pytest.fixture
-def base_task(fixed_today):
+def base_task(fixed_today: date) -> Task:
     return {
         "id": "1",
         "description": "test",
         "created_at": fixed_today,
-        "due_date": None,
+        "due_date": fixed_today + timedelta(days=2),
         "priority": Priority.MEDIUM,
         "done": False,
-        "tags": [],
+        "tags": ["python", "sql"],
+        "completed_at": None,
     }
