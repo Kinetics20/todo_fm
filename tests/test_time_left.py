@@ -25,6 +25,10 @@ def test_time_left_overdue_singular(base_task: Task, fixed_today: date) -> None:
     assert time_left(task, today=fixed_today) == f"Overdue by {(timedelta(days=3)).days} days."
 
 
-# test_time_left_due_today
+def test_time_left_due_today(base_task: Task, fixed_today: date) -> None:
+
+    task = cast(Task, ({**base_task, 'due_date': fixed_today, "done": False}))
+    assert time_left(task, today=fixed_today) == f"Due today!"
+
 # test_time_left_future_plural
 # test_time_left_future_singular
