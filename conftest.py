@@ -9,8 +9,8 @@ from src.task import Priority, Task
 
 @pytest.fixture
 def fixed_today() -> date:
-    """Constant value for tests" (2025-08-24)."""
-    return date(2025, 8, 24)
+    """Constant value for tests" (2025-08-25)."""
+    return date(2025, 8, 25)
 
 
 @pytest.fixture
@@ -43,6 +43,7 @@ def predictable_uuid(monkeypatch: MonkeyPatch) -> str:
 
 @pytest.fixture
 def base_task(fixed_today: date) -> Task:
+    """Create base task."""
     return {
         "id": "1",
         "description": "test",
