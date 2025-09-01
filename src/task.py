@@ -1,6 +1,6 @@
 import uuid
 from collections.abc import Iterable
-from datetime import date
+from datetime import date, timedelta
 from enum import Enum
 from typing import TypedDict
 
@@ -60,12 +60,12 @@ def unique_tags(tags: Iterable[str] | None) -> list[str]:
 
 
 def create_task(
-    description: str,
-    due_date: date | None = None,
-    priority: Priority | str = Priority.MEDIUM,
-    tags: list[str] | None = None,
-    *,
-    today: date | None = None,
+        description: str,
+        due_date: date | None = None,
+        priority: Priority | str = Priority.MEDIUM,
+        tags: list[str] | None = None,
+        *,
+        today: date | None = None,
 ) -> Task:
     today = date.today() if today is None else today
 
@@ -120,6 +120,28 @@ def time_left(task: Task, today: date | None = None) -> str:
         return f"{delta} day{'s' if delta != 1 else ''} left."
 
 
+def add_tag(task: Task, tag: str) -> None:
+    # if not tag.strip():
+    #     # raise ValueError('Tag cannot be empty.')
+    #     return
+
+    if not has_tag(task, tag):
+        task["tags"].append(tag.strip().lower())
+
+
+def remove_tag(task: Task, tag: str) -> None:
+    task["tags"].remove(tag.strip().lower())
+
+
+def postpone(task: Task, days: int, *, today: date | None = None) -> None:
+    if days == 0:
+        return
+
+    base = task["due_date"] or (today or date.today())
+    task["due_date"] = base + timedelta(days=days)
+
+
 if __name__ == "__main__":
-    task_ = create_task("123", date(2025, 8, 10), Priority.HIGH)
+    task_ = create_task("123", date(2025, 9, 10), Priority.HIGH)
+    add_tag(task_, " Python ")
     print(task_)
