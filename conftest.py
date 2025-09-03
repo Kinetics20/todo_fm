@@ -9,8 +9,8 @@ from src.task import Priority, Task
 
 @pytest.fixture
 def fixed_today() -> date:
-    """Constant value for tests" (2025-09-2)."""
-    return date(2025, 9, 2)
+    """Constant value for tests" (2025-09-3)."""
+    return date(2025, 9, 3)
 
 
 @pytest.fixture
