@@ -1,25 +1,25 @@
-from datetime import timedelta
+from datetime import timedelta, date
 from unittest.mock import patch
 
-from src.task import Priority, create_task
+from src.task import PriorityEnum, create_task, StatusEnum
 
 
-def test_create_task_happy_path(fixed_today, valid_description, valid_tags, predictable_uuid):
+def test_create_task_happy_path(fixed_today: date, valid_description: str, valid_tags: list[str], predictable_uuid: str) -> None:
     due = fixed_today + timedelta(days=3)
     task = create_task(
-        description=valid_description, due_date=due, priority=Priority.LOW, tags=valid_tags, today=fixed_today
+        description=valid_description, due_date=due, priority=PriorityEnum.LOW, tags=valid_tags, today=fixed_today
     )
 
     assert task["id"] == predictable_uuid
     assert task["description"] == valid_description
     assert task["created_at"] == fixed_today
     assert task["due_date"] == due
-    assert task["priority"] == Priority.LOW
-    assert not task["done"]
+    assert task["priority"] == PriorityEnum.LOW
+    assert task["status"] == StatusEnum.NEW
     assert task["tags"] == ["work", "urgent", "home"]
 
 
-def test_create_task_all_helpers_called(fixed_today):
+def test_create_task_all_helpers_called(fixed_today: date) -> None:
     description_in = " Learn  Python "
     due_in = fixed_today + timedelta(days=2)
     priority_in = "high"

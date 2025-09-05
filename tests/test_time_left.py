@@ -1,11 +1,11 @@
 from datetime import date, timedelta
 from typing import cast
 
-from src.task import Task, time_left
+from src.task import Task, time_left, StatusEnum
 
 
 def test_time_left_done_returns_completed(base_task: Task, fixed_today: date) -> None:
-    task = cast(Task, ({**base_task, "done": True}))
+    task = cast(Task, ({**base_task, "status": StatusEnum.COMPLETED}))
     assert time_left(task, today=fixed_today) == "Task already completed."
 
 

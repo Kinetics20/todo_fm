@@ -4,7 +4,7 @@ from datetime import date, timedelta
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
-from src.task import Priority, Task
+from src.task import PriorityEnum, Task, StatusEnum
 
 
 @pytest.fixture
@@ -49,8 +49,8 @@ def base_task(fixed_today: date) -> Task:
         "description": "test",
         "created_at": fixed_today,
         "due_date": fixed_today + timedelta(days=2),
-        "priority": Priority.MEDIUM,
-        "done": False,
+        "priority": PriorityEnum.MEDIUM,
+        "status": StatusEnum.NEW,
         "tags": ["python", "sql"],
         "completed_at": None,
     }
