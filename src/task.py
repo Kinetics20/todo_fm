@@ -1,14 +1,22 @@
 import uuid
 from collections.abc import Iterable
 from datetime import date, timedelta
-from enum import Enum
+from enum import Enum, IntEnum, auto
 from typing import TypedDict
 
 
-class Priority(Enum):
+class PriorityEnum(Enum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
+
+
+class StatusEnum(IntEnum):
+    NEW = auto()
+    COMPLETED = auto()
+    IN_PROGRESS = auto()
+    OVERDUE = auto()
+
 
 
 class Task(TypedDict):
@@ -16,19 +24,29 @@ class Task(TypedDict):
     description: str
     created_at: date
     due_date: date | None
-    priority: Priority
-    done: bool
+    priority: PriorityEnum
+    status: StatusEnum
     tags: list[str]
     completed_at: date | None
 
 
-def normalize_priority(priority: Priority | str) -> Priority:
-    if isinstance(priority, Priority):
+def normalize_priority(priority: PriorityEnum | str) -> PriorityEnum:
+    if isinstance(priority, PriorityEnum):
         return priority
     try:
-        return Priority(priority)
+        return PriorityEnum(priority)
     except ValueError as err:
-        raise ValueError(f"Priority must be one of: {[p.value for p in Priority]}") from err
+        raise ValueError(f"Priority must be one of: {[p.value for p in PriorityEnum]}") from err
+
+
+def normalize_status(status: StatusEnum | int) -> StatusEnum:
+    if isinstance(status, StatusEnum):
+        return status
+    try:
+        return StatusEnum(status)
+    except ValueError as err:
+        raise ValueError(f'Status must be one of: {[s.value for s in StatusEnum]}') from err
+
 
 
 def validate_description(description: str) -> str:
@@ -62,7 +80,8 @@ def unique_tags(tags: Iterable[str] | None) -> list[str]:
 def create_task(
         description: str,
         due_date: date | None = None,
-        priority: Priority | str = Priority.MEDIUM,
+        priority: PriorityEnum | str = PriorityEnum.MEDIUM,
+        status: StatusEnum | int = StatusEnum.NEW,
         tags: list[str] | None = None,
         *,
         today: date | None = None,
@@ -72,7 +91,12 @@ def create_task(
     description = validate_description(description)
     due_date = validate_due_date(due_date, today=today)
     priority = normalize_priority(priority)
+    status = normalize_status(status)
     tags = unique_tags(tags)
+
+    if due_date is not None and due_date > today and status == StatusEnum.OVERDUE:
+        raise ValueError(f"Status cannot be OVERDUE if due_date is greater than zero.")
+
 
     return {
         "id": str(uuid.uuid4()),
@@ -80,7 +104,7 @@ def create_task(
         "created_at": today,
         "due_date": due_date,
         "priority": priority,
-        "done": False,
+        "status": status,
         "tags": tags,
         "completed_at": None,
     }
@@ -89,22 +113,22 @@ def create_task(
 def is_overdue(task: Task, *, today: date | None = None) -> bool:
     today = date.today() if today is None else today
 
-    return (task["due_date"] is not None) and (task["due_date"] < today) and not task["done"]
+    return (task["due_date"] is not None) and (task["due_date"] < today) and (task["status"] > StatusEnum.COMPLETED)
 
 
 def has_tag(task: Task, tag: str) -> bool:
     return tag.strip().lower() in task["tags"]
 
 
-def mark_done(task: Task) -> None:
-    task["done"] = True
+def mark_completed(task: Task) -> None:
+    task["status"] = StatusEnum.COMPLETED
     task["completed_at"] = date.today()
 
 
 def time_left(task: Task, today: date | None = None) -> str:
     today = date.today() if today is None else today
 
-    if task["done"]:
+    if task["status"] == StatusEnum.COMPLETED:
         return "Task already completed."
 
     if task["due_date"] is None:
@@ -142,6 +166,7 @@ def postpone(task: Task, days: int, *, today: date | None = None) -> None:
 
 
 if __name__ == "__main__":
-    task_ = create_task("123", date(2025, 9, 10), Priority.HIGH)
+    task_ = create_task("123", date(2025, 9, 10), PriorityEnum.HIGH, 4)
     add_tag(task_, " Python ")
     print(task_)
+    print(time_left(task_))
