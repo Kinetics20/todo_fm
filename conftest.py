@@ -4,7 +4,7 @@ from datetime import date, timedelta
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
-from src.task import PriorityEnum, Task, StatusEnum
+from src.task import PriorityEnum, StatusEnum, Task
 
 
 @pytest.fixture

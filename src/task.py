@@ -95,7 +95,7 @@ def create_task(
     tags = unique_tags(tags)
 
     if due_date is not None and due_date > today and status == StatusEnum.OVERDUE:
-        raise ValueError(f"Status cannot be OVERDUE if due_date is greater than zero.")
+        raise ValueError("Status cannot be OVERDUE if due_date is greater than zero.")
 
 
     return {

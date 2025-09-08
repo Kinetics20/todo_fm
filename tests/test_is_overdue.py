@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from typing import cast
 
-from src.task import Task, is_overdue, StatusEnum
+from src.task import StatusEnum, Task, is_overdue
 
 
 def test_is_overdue_due_in_past_not_done(fixed_today: date, base_task: Task) -> None:

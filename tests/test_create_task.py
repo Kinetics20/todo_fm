@@ -1,7 +1,7 @@
-from datetime import timedelta, date
+from datetime import date, timedelta
 from unittest.mock import patch
 
-from src.task import PriorityEnum, create_task, StatusEnum
+from src.task import PriorityEnum, StatusEnum, create_task
 
 
 def test_create_task_happy_path(fixed_today: date, valid_description: str, valid_tags: list[str], predictable_uuid: str) -> None:

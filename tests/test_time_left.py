@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from typing import cast
 
-from src.task import Task, time_left, StatusEnum
+from src.task import StatusEnum, Task, time_left
 
 
 def test_time_left_done_returns_completed(base_task: Task, fixed_today: date) -> None:
