@@ -18,7 +18,6 @@ class StatusEnum(IntEnum):
     OVERDUE = auto()
 
 
-
 class Task(TypedDict):
     id: str
     description: str
@@ -45,8 +44,7 @@ def normalize_status(status: StatusEnum | int) -> StatusEnum:
     try:
         return StatusEnum(status)
     except ValueError as err:
-        raise ValueError(f'Status must be one of: {[s.value for s in StatusEnum]}') from err
-
+        raise ValueError(f"Status must be one of: {[s.value for s in StatusEnum]}") from err
 
 
 def validate_description(description: str) -> str:
@@ -78,13 +76,13 @@ def unique_tags(tags: Iterable[str] | None) -> list[str]:
 
 
 def create_task(
-        description: str,
-        due_date: date | None = None,
-        priority: PriorityEnum | str = PriorityEnum.MEDIUM,
-        status: StatusEnum | int = StatusEnum.NEW,
-        tags: list[str] | None = None,
-        *,
-        today: date | None = None,
+    description: str,
+    due_date: date | None = None,
+    priority: PriorityEnum | str = PriorityEnum.MEDIUM,
+    status: StatusEnum | int = StatusEnum.NEW,
+    tags: list[str] | None = None,
+    *,
+    today: date | None = None,
 ) -> Task:
     today = date.today() if today is None else today
 
@@ -95,8 +93,7 @@ def create_task(
     tags = unique_tags(tags)
 
     if due_date is not None and due_date > today and status == StatusEnum.OVERDUE:
-        raise ValueError("Status cannot be OVERDUE if due_date is greater than zero.")
-
+        raise ValueError("Status cannot be OVERDUE if due_date is greater than today.")
 
     return {
         "id": str(uuid.uuid4()),
