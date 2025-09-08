@@ -1,10 +1,12 @@
+from collections.abc import Iterable
+
 import pytest
 
 from src.task import unique_tags
 
 
 @pytest.mark.parametrize("tags", [None, [], set()])
-def test_unique_tags_no_tags_return_empty(tags):
+def test_unique_tags_no_tags_return_empty(tags: Iterable[str] | None) -> None:
     assert unique_tags(tags) == []
 
 
@@ -12,10 +14,10 @@ def test_unique_tags_no_tags_return_empty(tags):
     "tags, out",
     [(["", "   ", "work"], ["work"]), (["  home  ", "work"], ["home", "work"]), (["  Urgent", "urgent"], ["urgent"])],
 )
-def test_unique_tags_strips_and_removes_empty(tags, out):
+def test_unique_tags_strips_and_removes_empty(tags: Iterable[str] | None, out: Iterable[str] | None) -> None:
     assert unique_tags(tags) == out
 
 
-def test_unique_tags_removes_duplicates_preserves_order():
+def test_unique_tags_removes_duplicates_preserves_order() -> None:
     tags = ["home", "work", "urgent", "work", "home"]
     assert unique_tags(tags) == ["home", "work", "urgent"]
