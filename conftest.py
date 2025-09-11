@@ -9,8 +9,8 @@ from src.task import PriorityEnum, StatusEnum, Task
 
 @pytest.fixture
 def fixed_today() -> date:
-    """Constant value for tests" (2025-09-10)."""
-    return date(2025, 9, 10)
+    """Constant value for tests" (2025-09-11)."""
+    return date(2025, 9, 11)
 
 
 @pytest.fixture
