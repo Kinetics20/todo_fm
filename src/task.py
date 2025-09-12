@@ -163,7 +163,7 @@ def postpone(task: Task, days: int, *, today: date | None = None) -> None:
 
 
 if __name__ == "__main__":
-    task_ = create_task("123", date(2025, 9, 10), PriorityEnum.HIGH, 4)
+    task_ = create_task("123", date(2025, 12, 13), PriorityEnum.HIGH, 1)
     add_tag(task_, " Python ")
     print(task_)
     print(time_left(task_))
