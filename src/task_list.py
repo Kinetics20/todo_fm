@@ -32,6 +32,24 @@ def add_task(tasks: TaskList, task: Mapping[str, Any]) -> None:
 
     tasks.append(task)
 
+
+def remove_task(tasks: TaskList, task: Mapping[str, Any]) -> None:
+    if not validate_task_type(task):
+        raise TypeError("Task is invalid/missing keys.")
+
+    if task not in tasks:
+        raise ValueError('Task does not exist in tasks list.')
+
+    tasks.remove(task)
+
+
+def filter_by_tag(tasks: TaskList, tag: str) -> TaskList:
+    filtered_tasks = [task for task in tasks if tag in task['tags']]
+
+    if not filtered_tasks:
+        raise ValueError('The tag does not exist in tags list.')
+    return filtered_tasks
+
 #TODO remove_task, filter_by_tag
 if __name__ == "__main__":
     tasks_: list[Task] = [
