@@ -5,6 +5,7 @@ import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
 from src.task import PriorityEnum, StatusEnum, Task
+from src.task_list import TaskList
 
 
 @pytest.fixture
@@ -54,3 +55,24 @@ def base_task(fixed_today: date) -> Task:
         "tags": ["python", "sql"],
         "completed_at": None,
     }
+
+
+@pytest.fixture
+def task_completed(fixed_today: date) -> Task:
+    """Create completed task."""
+    return {
+        "id": "2",
+        "description": "valid task",
+        "created_at": fixed_today,
+        "due_date": fixed_today + timedelta(days=2),
+        "priority": PriorityEnum.MEDIUM,
+        "status": StatusEnum.COMPLETED,
+        "tags": ["python", "sql"],
+        "completed_at": fixed_today,
+    }
+
+
+@pytest.fixture
+def base_task_list(base_task: Task, task_completed: Task) -> TaskList:
+    """Create base task list"""
+    return [base_task, task_completed]
