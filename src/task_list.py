@@ -3,7 +3,7 @@ from datetime import date
 from pprint import pprint
 from typing import Any, TypeGuard
 
-from src.task import PriorityEnum, StatusEnum, Task, create_task
+from src.task import PriorityEnum, StatusEnum, Task, create_task, has_tag
 
 type TaskList = list[Task]
 
@@ -38,19 +38,20 @@ def remove_task(tasks: TaskList, task: Mapping[str, Any]) -> None:
         raise TypeError("Task is invalid/missing keys.")
 
     if task not in tasks:
-        raise ValueError('Task does not exist in tasks list.')
+        raise ValueError("Task does not exist in tasks list.")
 
     tasks.remove(task)
 
 
 def filter_by_tag(tasks: TaskList, tag: str) -> TaskList:
-    filtered_tasks = [task for task in tasks if tag in task['tags']]
+    return [task for task in tasks if has_tag(task, tag)]
 
-    if not filtered_tasks:
-        raise ValueError('The tag does not exist in tags list.')
-    return filtered_tasks
 
-#TODO remove_task, filter_by_tag
+def remove_completed(tasks: TaskList) -> None:
+    tasks[:] = [task for task in tasks if task["status"] != StatusEnum.COMPLETED]
+
+
+# TODO remove_task, filter_by_tag
 if __name__ == "__main__":
     tasks_: list[Task] = [
         create_task("python", date(2025, 9, 12), tags=["coding", "learning"]),
