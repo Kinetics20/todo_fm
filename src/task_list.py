@@ -51,7 +51,17 @@ def remove_completed(tasks: TaskList) -> None:
     tasks[:] = [task for task in tasks if task["status"] != StatusEnum.COMPLETED]
 
 
-# TODO remove_task, filter_by_tag
+def remove_overdue(tasks: TaskList) -> None:
+    tasks[:] = [task for task in tasks if task["status"] != StatusEnum.OVERDUE]
+
+
+def get_by_id(tasks: TaskList, idx: str) -> Task:
+    for task in tasks:
+        if task["id"] == idx:
+            return task
+    raise ValueError(f"No task with id {idx} found.")
+
+
 if __name__ == "__main__":
     tasks_: list[Task] = [
         create_task("python", date(2025, 9, 12), tags=["coding", "learning"]),
