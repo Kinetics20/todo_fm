@@ -52,7 +52,7 @@ def base_task(fixed_today: date) -> Task:
         "due_date": fixed_today + timedelta(days=2),
         "priority": PriorityEnum.MEDIUM,
         "status": StatusEnum.NEW,
-        "tags": ["python", "sql"],
+        "tags": ["python", "sql", "javascript"],
         "completed_at": None,
     }
 
@@ -69,6 +69,36 @@ def task_completed(fixed_today: date) -> Task:
         "status": StatusEnum.COMPLETED,
         "tags": ["python", "sql"],
         "completed_at": fixed_today,
+    }
+
+
+@pytest.fixture
+def task_overdue(fixed_today: date) -> Task:
+    """Create overdue task."""
+    return {
+        "id": "3",
+        "description": "valid task",
+        "created_at": fixed_today - timedelta(days=10),
+        "due_date": fixed_today - timedelta(days=2),
+        "priority": PriorityEnum.MEDIUM,
+        "status": StatusEnum.OVERDUE,
+        "tags": ["python", "sql"],
+        "completed_at": None,
+    }
+
+
+@pytest.fixture
+def task_priority_high(fixed_today: date) -> Task:
+    """Create task with high priority."""
+    return {
+        "id": "4",
+        "description": "test",
+        "created_at": fixed_today,
+        "due_date": fixed_today + timedelta(days=10),
+        "priority": PriorityEnum.HIGH,
+        "status": StatusEnum.NEW,
+        "tags": ["python", "sql"],
+        "completed_at": None,
     }
 
 
