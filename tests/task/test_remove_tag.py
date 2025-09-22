@@ -8,13 +8,13 @@ from src.task import Task, remove_tag
 def test_remove_tag_existing_tag(base_task: Task) -> None:
     remove_tag(base_task, "python")
 
-    assert base_task["tags"] == ["sql", 'javascript']
+    assert base_task["tags"] == ["sql", "javascript"]
 
 
 def test_remove_tag_normalizes_case_and_spaces(base_task: Task) -> None:
     remove_tag(base_task, " Python ")
 
-    assert base_task["tags"] == ["sql", 'javascript']
+    assert base_task["tags"] == ["sql", "javascript"]
 
 
 def test_remove_tag_empty_tag(base_task: Task) -> None:

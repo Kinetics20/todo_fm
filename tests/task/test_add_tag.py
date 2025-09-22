@@ -6,13 +6,13 @@ from src.task import Task, add_tag
 def test_add_tag_normalizes_case_and_spaces(base_task: Task) -> None:
     add_tag(base_task, " Java ")
 
-    assert base_task["tags"] == ["python", "sql", 'javascript', "java"]
+    assert base_task["tags"] == ["python", "sql", "javascript", "java"]
 
 
 def test_add_tag_skips_duplicates(base_task: Task) -> None:
     add_tag(base_task, "python")
 
-    assert base_task["tags"] == ["python", "sql", 'javascript']
+    assert base_task["tags"] == ["python", "sql", "javascript"]
 
 
 def test_add_tag_appends_once(base_task: Task) -> None:
