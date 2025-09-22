@@ -1,7 +1,7 @@
-from collections.abc import Iterable, Mapping
+from collections.abc import Callable, Iterable, Mapping
 from datetime import date
 from pprint import pprint
-from typing import Any, TypeGuard
+from typing import Any, Literal, TypeGuard, cast
 
 from src.task import PriorityEnum, StatusEnum, Task, create_task, has_tag
 
@@ -11,6 +11,9 @@ type TaskList = list[Task]
 def create_task_list(tasks: Iterable[Task] | None = None) -> TaskList:
     if tasks is None:
         return []
+    ids = [task["id"] for task in tasks]
+    if len(ids) != len(set(ids)):
+        raise ValueError("Can not be create task list because it contains duplicates.")
     return list(tasks)
 
 
@@ -60,6 +63,32 @@ def get_by_id(tasks: TaskList, idx: str) -> Task:
         if task["id"] == idx:
             return task
     raise ValueError(f"No task with id {idx} found.")
+
+
+def sort_by(
+    tasks: TaskList,
+    *,
+    by: Literal["due_date", "created_at", "priority", "description"] = "due_date",
+    reverse: bool = False,
+) -> TaskList:
+    priority_order: dict[PriorityEnum, int] = {
+        PriorityEnum.LOW: 0,
+        PriorityEnum.MEDIUM: 1,
+        PriorityEnum.HIGH: 2,
+    }
+
+    key_map: dict[str, Callable[[Task], Any]] = {
+        "due_date":    lambda t: (t["due_date"] or date.max),
+        "created_at":  lambda t: t["created_at"],
+        "priority":    lambda t: priority_order[t["priority"]],
+        "description": lambda t: t["description"].lower(),
+    }
+
+    if by not in key_map:
+        raise ValueError(f"Unsupported sort key: {by}")
+
+    key_fn = key_map[by]
+    return cast(TaskList, sorted(tasks, key=key_fn, reverse=reverse))
 
 
 if __name__ == "__main__":
