@@ -13,8 +13,8 @@ class PriorityEnum(Enum):
 
 class StatusEnum(IntEnum):
     NEW = auto()
-    COMPLETED = auto()
     IN_PROGRESS = auto()
+    COMPLETED = auto()
     OVERDUE = auto()
 
 
@@ -110,7 +110,7 @@ def create_task(
 def is_overdue(task: Task, *, today: date | None = None) -> bool:
     today = date.today() if today is None else today
 
-    return (task["due_date"] is not None) and (task["due_date"] < today) and (task["status"] > StatusEnum.COMPLETED)
+    return (task["due_date"] is not None) and (task["due_date"] < today) and (task["status"] != StatusEnum.COMPLETED)
 
 
 def has_tag(task: Task, tag: str) -> bool:
