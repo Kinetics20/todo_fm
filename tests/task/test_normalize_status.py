@@ -9,7 +9,7 @@ from src.task import StatusEnum, normalize_status
     "status, expected_status",
     [
         (StatusEnum.COMPLETED, StatusEnum.COMPLETED),
-        (2, StatusEnum.COMPLETED),
+        (3, StatusEnum.COMPLETED),
         (4, StatusEnum.OVERDUE),
     ],
 )
