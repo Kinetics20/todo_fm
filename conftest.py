@@ -57,7 +57,7 @@ def base_task(fixed_today: date) -> Task:
     }
 
 @pytest.fixture
-def base_task_priority_low(fixed_today: date) -> Task:
+def task_priority_low(fixed_today: date) -> Task:
     """Create base task low priority."""
     return {
         "id": "1",
@@ -65,7 +65,7 @@ def base_task_priority_low(fixed_today: date) -> Task:
         "created_at": fixed_today - timedelta(days=4),
         "due_date": fixed_today + timedelta(days=4),
         "priority": PriorityEnum.LOW,
-        "status": StatusEnum.NEW,
+        "status": StatusEnum.IN_PROGRESS,
         "tags": ["python", "sql", "javascript"],
         "completed_at": None,
     }
@@ -120,3 +120,15 @@ def task_priority_high(fixed_today: date) -> Task:
 def base_task_list(base_task: Task, task_completed: Task) -> TaskList:
     """Create base task list"""
     return [base_task, task_completed]
+
+
+@pytest.fixture
+def task_list(
+        base_task: Task,
+        task_priority_low: Task,
+        task_completed: Task,
+        task_overdue: Task,
+        task_priority_high: Task,
+) -> TaskList:
+    """Create task list"""
+    return [base_task, task_priority_low, task_completed, task_overdue, task_priority_high]
