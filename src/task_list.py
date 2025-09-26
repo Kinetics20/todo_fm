@@ -68,7 +68,7 @@ def get_by_id(tasks: TaskList, idx: str) -> Task:
 def sort_by(
     tasks: TaskList,
     *,
-    by: Literal["due_date", "created_at", "priority", "description"] = "due_date",
+    by: Literal["due_date", "created_at", "priority", "description", "status"] = "due_date",
     reverse: bool = False,
 ) -> TaskList:
     priority_order: dict[PriorityEnum, int] = {
@@ -82,6 +82,7 @@ def sort_by(
         "created_at":  lambda t: t["created_at"],
         "priority":    lambda t: priority_order[t["priority"]],
         "description": lambda t: t["description"].lower(),
+        "status" : lambda t: t["status"]
     }
 
     if by not in key_map:
@@ -89,6 +90,28 @@ def sort_by(
 
     key_fn = key_map[by]
     return cast(TaskList, sorted(tasks, key=key_fn, reverse=reverse))
+
+
+def filter_by(
+        tasks: TaskList,
+        *,
+        priority: PriorityEnum | None = None,
+        status: StatusEnum | None = None,
+        tag: str | None = None,
+        due_date: date | None = None
+) -> TaskList:
+    def matches(task: Task) -> bool:
+        if priority is not None and task['priority'] != priority:
+            return False
+        if status is not None and task['status'] != status:
+            return False
+        if tag is not None and tag not in task['tags']:
+            return False
+        if due_date is not None and (task['due_date'] is None or task['due_date'] != due_date):
+            return False
+        return True
+
+    return [task for task in tasks if matches(task)]
 
 
 if __name__ == "__main__":
