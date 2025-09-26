@@ -56,6 +56,20 @@ def base_task(fixed_today: date) -> Task:
         "completed_at": None,
     }
 
+@pytest.fixture
+def base_task_priority_low(fixed_today: date) -> Task:
+    """Create base task low priority."""
+    return {
+        "id": "1",
+        "description": "low priority task",
+        "created_at": fixed_today - timedelta(days=4),
+        "due_date": fixed_today + timedelta(days=4),
+        "priority": PriorityEnum.LOW,
+        "status": StatusEnum.NEW,
+        "tags": ["python", "sql", "javascript"],
+        "completed_at": None,
+    }
+
 
 @pytest.fixture
 def task_completed(fixed_today: date) -> Task:
